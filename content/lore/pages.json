@@ -1,0 +1,21 @@
+{
+  "pages": [
+    {
+      "pg": 1,
+      "blocks": [
+        {
+          "type": "text",
+          "side": "left",
+          "text": "",
+          "caption": ""
+        },
+        {
+          "type": "text",
+          "side": "right",
+          "text": "",
+          "caption": ""
+        }
+      ]
+    }
+  ]
+}

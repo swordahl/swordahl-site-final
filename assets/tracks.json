@@ -1,0 +1,38 @@
+{
+  "rotation_minutes": 30,
+  "featured_count": 7,
+  "tracks": [
+    {
+      "title": "Track 01 (drop mp3 in assets/tracks)",
+      "file": "tracks/track01.mp3"
+    },
+    {
+      "title": "Track 02",
+      "file": "tracks/track02.mp3"
+    },
+    {
+      "title": "Track 03",
+      "file": "tracks/track03.mp3"
+    },
+    {
+      "title": "Track 04",
+      "file": "tracks/track04.mp3"
+    },
+    {
+      "title": "Track 05",
+      "file": "tracks/track05.mp3"
+    },
+    {
+      "title": "Track 06",
+      "file": "tracks/track06.mp3"
+    },
+    {
+      "title": "Track 07",
+      "file": "tracks/track07.mp3"
+    },
+    {
+      "title": "Track 08",
+      "file": "tracks/track08.mp3"
+    }
+  ]
+}

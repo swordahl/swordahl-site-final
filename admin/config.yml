@@ -1,0 +1,43 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "assets/uploads"
+public_folder: "/assets/uploads"
+
+collections:
+  - name: "lorebook"
+    label: "Lore Book"
+    files:
+      - name: "pages"
+        label: "Pages"
+        file: "content/lore/pages.json"
+        format: "json"
+        fields:
+          - label: "Pages"
+            name: "pages"
+            widget: "list"
+            summary: "PG {{fields.pg}}"
+            fields:
+              - { label: "PG", name: "pg", widget: "number", value_type: "int", min: 1 }
+              - label: "Blocks"
+                name: "blocks"
+                widget: "list"
+                summary: "{{fields.type}} • {{fields.side}}"
+                fields:
+                  - label: "Type"
+                    name: "type"
+                    widget: "select"
+                    options:
+                      - { label: "Text", value: "text" }
+                      - { label: "Image", value: "image" }
+                      - { label: "Video", value: "video" }
+                  - label: "Side"
+                    name: "side"
+                    widget: "select"
+                    options:
+                      - { label: "Left", value: "left" }
+                      - { label: "Right", value: "right" }
+                  - { label: "Text", name: "text", widget: "text", required: false }
+                  - { label: "Media File", name: "src", widget: "file", required: false }
+                  - { label: "Caption", name: "caption", widget: "string", required: false }

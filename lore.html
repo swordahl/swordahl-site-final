@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Swordahl — Lore</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="lore-body">
+  <main class="lore-stage">
+    <img class="lore-art" src="assets/lore_page.png" alt="Lore book">
+
+    <a class="back-btn pixel-btn" href="index.html">BACK</a>
+
+    <!-- Page containers (render-only; editing is via /admin) -->
+    <section class="lore-page lore-left" aria-label="Left page"></section>
+    <section class="lore-page lore-right" aria-label="Right page"></section>
+
+    <!-- Visible arrows on the book -->
+    <button class="lore-arrow lore-prev" type="button" aria-label="Previous page">◄</button>
+    <button class="lore-arrow lore-next" type="button" aria-label="Next page">►</button>
+
+    <!-- Page number indicator -->
+    <div class="lore-pg" aria-label="Page number">PG 1</div>
+
+    <!-- Modal -->
+    <div class="lore-modal" id="loreModal" aria-hidden="true">
+      <div class="lore-modal-backdrop" data-close="1"></div>
+      <div class="lore-modal-content" role="dialog" aria-modal="true" aria-label="Media viewer">
+        <button class="lore-modal-close pixel-btn" type="button" data-close="1">X</button>
+        <div id="loreModalBody"></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="lore.js"></script>
+</body>
+</html>

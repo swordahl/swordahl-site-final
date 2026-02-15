@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Music — Swordahl</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="back-btn" href="index.html">← BACK</a>
+
+  
+  <div id="trackPopup" class="track-popup" aria-live="polite">
+    <div class="label">INVENTORY • NOW PLAYING</div>
+    <div id="trackTitle" class="title">—</div>
+    <div class="bar"><i id="trackBar"></i></div>
+  </div>
+
+<main class="music-stage" aria-label="Music">
+    <img class="music-art" src="assets/music_page.png" alt="Music page artwork">
+    <div id="rune-layer" aria-hidden="true"></div>
+
+    <!-- 7 play buttons (positions match your marked screenshot) -->
+    <button class="play-btn pb1" data-slot="0" aria-label="Play track 1"><img src="assets/play_pixel.png" alt=""></button>
+    <button class="play-btn pb2" data-slot="1" aria-label="Play track 2"><img src="assets/play_pixel.png" alt=""></button>
+    <button class="play-btn pb3" data-slot="2" aria-label="Play track 3"><img src="assets/play_pixel.png" alt=""></button>
+    <button class="play-btn pb4" data-slot="3" aria-label="Play track 4"><img src="assets/play_pixel.png" alt=""></button>
+    <button class="play-btn pb5" data-slot="4" aria-label="Play track 5"><img src="assets/play_pixel.png" alt=""></button>
+    <button class="play-btn pb6" data-slot="5" aria-label="Play track 6"><img src="assets/play_pixel.png" alt=""></button>
+    <button class="play-btn pb7" data-slot="6" aria-label="Play track 7"><img src="assets/play_pixel.png" alt=""></button>
+  </main>
+
+  <audio id="slashSfx" preload="auto" src="assets/slash8.wav"></audio>
+  <audio id="player" preload="metadata"></audio>
+
+  <script src="music.js"></script>
+</body>
+</html>
