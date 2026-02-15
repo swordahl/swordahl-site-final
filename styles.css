@@ -465,3 +465,63 @@ a, button, .play-btn, .back-btn{
   }
 
 }
+/* ============================= */
+/* ===== MOBILE FIX PACK ====== */
+/* ============================= */
+
+@media (max-width: 768px){
+
+  /* ===== LANDING PAGE ===== */
+  .art{
+    width:100vw;
+    height:100vh;
+    object-fit:cover; /* stretch vertically */
+  }
+
+  .backdrop{
+    filter:blur(18px) brightness(.9);
+    transform:scale(1.15);
+  }
+
+  /* ===== MUSIC PAGE ===== */
+  .music-art{
+    width:100vw;
+    height:100vh;
+    object-fit:contain; /* keep rectangle */
+  }
+
+  .play-btn{
+    width:34px;
+    height:34px;
+    border-radius:10px;
+  }
+
+  .play-btn img{
+    width:16px;
+    height:16px;
+  }
+
+  /* ===== LORE PAGE ===== */
+  .lore-page{
+    top: 18%;
+    width: 42%;
+    height: 62%;
+    font-size: 13px;
+    padding: 14px;
+  }
+
+  .lore-left{ left: 6%; }
+  .lore-right{ right: 6%; }
+
+  .lore-arrow{
+    width:48px;
+    height:38px;
+    font-size:22px;
+    bottom: 6%;
+  }
+
+  .lore-pg{
+    bottom: 6.5%;
+  }
+
+}
