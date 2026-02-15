@@ -2,42 +2,37 @@ backend:
   name: git-gateway
   branch: main
 
-media_folder: "assets/uploads"
-public_folder: "/assets/uploads"
+media_folder: "assets/images"
+public_folder: "/assets/images"
 
 collections:
-  - name: "lorebook"
+  - name: "lore"
     label: "Lore Book"
-    files:
-      - name: "pages"
-        label: "Pages"
-        file: "content/lore/pages.json"
-        format: "json"
-        fields:
-          - label: "Pages"
-            name: "pages"
-            widget: "list"
-            summary: "PG {{fields.pg}}"
+    folder: "content/lore"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+
+      - label: "Sections"
+        name: "sections"
+        widget: "list"
+        types:
+          - label: "Text Block"
+            name: "text"
+            widget: "object"
             fields:
-              - { label: "PG", name: "pg", widget: "number", value_type: "int", min: 1 }
-              - label: "Blocks"
-                name: "blocks"
-                widget: "list"
-                summary: "{{fields.type}} • {{fields.side}}"
-                fields:
-                  - label: "Type"
-                    name: "type"
-                    widget: "select"
-                    options:
-                      - { label: "Text", value: "text" }
-                      - { label: "Image", value: "image" }
-                      - { label: "Video", value: "video" }
-                  - label: "Side"
-                    name: "side"
-                    widget: "select"
-                    options:
-                      - { label: "Left", value: "left" }
-                      - { label: "Right", value: "right" }
-                  - { label: "Text", name: "text", widget: "text", required: false }
-                  - { label: "Media File", name: "src", widget: "file", required: false }
-                  - { label: "Caption", name: "caption", widget: "string", required: false }
+              - { label: "Text", name: "content", widget: "markdown" }
+
+          - label: "Image Block"
+            name: "image"
+            widget: "object"
+            fields:
+              - { label: "Image", name: "image", widget: "image" }
+              - { label: "Caption", name: "caption", widget: "string", required: false }
+
+          - label: "Video Block"
+            name: "video"
+            widget: "object"
+            fields:
+              - { label: "Video URL (YouTube/Vimeo)", name: "url", widget: "string" }
