@@ -525,3 +525,76 @@ a, button, .play-btn, .back-btn{
   }
 
 }
+/* =========================================
+   MOBILE FIXES (phones only)
+========================================= */
+@media (max-width: 768px){
+
+  /* ===== LANDING PAGE ===== */
+
+  .art{
+    object-fit: cover;        /* stretch vertically */
+  }
+
+  /* Move MUSIC label slightly right */
+  .label-music{
+    left: 78% !important;
+  }
+
+  /* ===== MUSIC PAGE ===== */
+
+  .music-art{
+    object-fit: contain;
+  }
+
+  .play-btn{
+    width:32px;
+    height:32px;
+    border-radius:10px;
+  }
+
+  .play-btn img{
+    width:16px;
+    height:16px;
+  }
+
+  /* Slight vertical correction so they sit inside rune circles */
+  .pb1{ transform: translate(-50%,-55%); }
+  .pb2{ transform: translate(-50%,-55%); }
+  .pb3{ transform: translate(-50%,-55%); }
+  .pb4{ transform: translate(-50%,-55%); }
+  .pb5{ transform: translate(-50%,-55%); }
+  .pb6{ transform: translate(-50%,-55%); }
+  .pb7{ transform: translate(-50%,-55%); }
+
+
+  /* ===== LORE PAGE ===== */
+
+  .lore-page{
+    top: 22%;
+    height: 60%;
+    width: 76%;
+    left: 12% !important;
+    right: auto !important;
+    font-size: 13px;
+  }
+
+  .lore-left,
+  .lore-right{
+    position:absolute;
+  }
+
+  /* Stack into single column for mobile */
+  .lore-right{
+    display:none;
+  }
+
+  .lore-prev{
+    left: 20%;
+  }
+
+  .lore-next{
+    right: 20%;
+  }
+
+}
