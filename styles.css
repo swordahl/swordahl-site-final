@@ -598,3 +598,31 @@ a, button, .play-btn, .back-btn{
   }
 
 }
+/* =========================================
+   MOBILE MUSIC BUTTON CORRECTION
+   (ONLY affects music page buttons)
+========================================= */
+@media (max-width: 768px){
+
+  /* Keep button size */
+  .play-btn{
+    width:32px;
+    height:32px;
+  }
+
+  .play-btn img{
+    width:16px;
+    height:16px;
+  }
+
+  /* 🔥 NEW MOBILE POSITIONS — based on your marked screenshot */
+
+  .pb1{ left:46%; top:29%; }
+  .pb2{ left:72%; top:33%; }
+  .pb3{ left:44%; top:45%; }
+  .pb4{ left:68%; top:49%; }
+  .pb5{ left:63%; top:60%; }
+  .pb6{ left:49%; top:63%; }
+  .pb7{ left:57%; top:66%; }
+
+}
