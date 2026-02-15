@@ -626,3 +626,37 @@ a, button, .play-btn, .back-btn{
   .pb7{ left:57%; top:66%; }
 
 }
+
+/* ============================= */
+/* MOBILE MUSIC BUTTON FIX ONLY */
+/* ============================= */
+
+@media (max-width: 768px){
+
+  .music-stage{
+    position:relative;
+  }
+
+  .music-art{
+    position:absolute;
+    inset:0;
+    margin:auto;
+    width:100%;
+    height:100%;
+    object-fit:contain;
+  }
+
+  .play-btn{
+    position:absolute;
+  }
+
+  /* Adjusted positions based on your screenshot marks */
+  .pb1{ left:35%; top:19%; }
+  .pb2{ left:74%; top:26%; }
+  .pb3{ left:33%; top:34%; }
+  .pb4{ left:69%; top:39%; }
+  .pb5{ left:62%; top:49%; }
+  .pb6{ left:40%; top:51%; }
+  .pb7{ left:53%; top:54%; }
+
+}
