@@ -6,13 +6,7 @@
         {
           "type": "text",
           "side": "left",
-          "text": "",
-          "caption": ""
-        },
-        {
-          "type": "text",
-          "side": "right",
-          "text": "",
+          "text": "**Testing**",
           "caption": ""
         }
       ]
