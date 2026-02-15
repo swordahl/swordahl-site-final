@@ -3,7 +3,8 @@
 
 const state = {
   pages: [],
-  idx: 0,
+  leftIdx: 0,
+  rightIdx: 1,
   turnSfx: new Audio("assets/sfx/page-turn-8bit.mp3"),
 };
 
@@ -22,7 +23,6 @@ function safeText(t){
 
 function normalizePages(raw){
   const arr = Array.isArray(raw?.pages) ? raw.pages : [];
-  // sort by pg numeric if provided, else keep order
   arr.sort((a,b)=> (Number(a.pg||0) - Number(b.pg||0)));
   return arr.map((p,i)=> ({
     pg: Number(p.pg || (i+1)),
@@ -37,23 +37,36 @@ function ensurePageExists(targetIdx){
   }
 }
 
-function render(){
-  ensurePageExists(state.idx);
-  const page = state.pages[state.idx];
-  elPg.textContent = "PG " + page.pg;
+function renderLeft(){
+  ensurePageExists(state.leftIdx);
+  const page = state.pages[state.leftIdx];
 
   elLeft.innerHTML = "";
+  elPg.textContent = "PG " + page.pg;
+
+  const blocks = page.blocks || [];
+  for(const b of blocks){
+    if((b.side || "left") === "left"){
+      elLeft.appendChild(renderBlock(b));
+    }
+  }
+
+  if(!elLeft.children.length) elLeft.appendChild(placeholder());
+}
+
+function renderRight(){
+  ensurePageExists(state.rightIdx);
+  const page = state.pages[state.rightIdx];
+
   elRight.innerHTML = "";
 
   const blocks = page.blocks || [];
   for(const b of blocks){
-    const side = (b.side === "right") ? "right" : "left";
-    const host = (side === "right") ? elRight : elLeft;
-    host.appendChild(renderBlock(b));
+    if((b.side || "left") === "right"){
+      elRight.appendChild(renderBlock(b));
+    }
   }
 
-  // If completely empty, show faint placeholder so user sees area
-  if(!elLeft.children.length) elLeft.appendChild(placeholder());
   if(!elRight.children.length) elRight.appendChild(placeholder());
 }
 
@@ -72,15 +85,16 @@ function renderBlock(b){
   if(type === "text"){
     const p = document.createElement("div");
     p.className = "lore-text";
-    // preserve line breaks
     p.textContent = safeText(b.text);
     wrap.appendChild(p);
+
     if(b.caption){
       const c = document.createElement("div");
       c.className = "lore-caption";
       c.textContent = safeText(b.caption);
       wrap.appendChild(c);
     }
+
     return wrap;
   }
 
@@ -90,93 +104,43 @@ function renderBlock(b){
     img.loading = "lazy";
     img.alt = safeText(b.caption || "Image");
     img.src = safeText(b.src);
-    img.addEventListener("click", ()=> openMedia({kind:"image", src: img.src, caption: b.caption}));
     wrap.appendChild(img);
+
     if(b.caption){
       const c = document.createElement("div");
       c.className = "lore-caption";
       c.textContent = safeText(b.caption);
       wrap.appendChild(c);
     }
+
     return wrap;
   }
 
   if(type === "video"){
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "lore-video-tile pixel-btn";
-    btn.textContent = "PLAY";
-    btn.addEventListener("click", ()=> openMedia({kind:"video", src: safeText(b.src), caption: b.caption}));
-    wrap.appendChild(btn);
+    const vid = document.createElement("video");
+    vid.src = safeText(b.src);
+    vid.className = "lore-video";
+    vid.controls = true;
+    vid.playsInline = true;
+    vid.style.width = "100%";
+    wrap.appendChild(vid);
+
     if(b.caption){
       const c = document.createElement("div");
       c.className = "lore-caption";
       c.textContent = safeText(b.caption);
       wrap.appendChild(c);
     }
+
     return wrap;
   }
 
-  // fallback
   const p = document.createElement("div");
   p.className = "lore-text";
   p.textContent = safeText(b.text || "");
   wrap.appendChild(p);
   return wrap;
 }
-
-function openMedia(m){
-  // clear
-  modalBody.innerHTML = "";
-  modal.setAttribute("aria-hidden","false");
-  modal.classList.add("open");
-
-  if(m.kind === "image"){
-    const img = document.createElement("img");
-    img.src = m.src;
-    img.className = "lore-modal-media";
-    img.alt = safeText(m.caption || "Image");
-    modalBody.appendChild(img);
-  }else{
-    const vid = document.createElement("video");
-    vid.src = m.src;
-    vid.className = "lore-modal-media";
-    vid.controls = true;
-    vid.autoplay = true;
-    vid.playsInline = true;
-    vid.addEventListener("ended", ()=> closeModal());
-    modalBody.appendChild(vid);
-  }
-
-  if(m.caption){
-    const cap = document.createElement("div");
-    cap.className = "lore-modal-caption";
-    cap.textContent = safeText(m.caption);
-    modalBody.appendChild(cap);
-  }
-}
-
-function closeModal(){
-  modal.classList.remove("open");
-  modal.setAttribute("aria-hidden","true");
-  // stop video if any
-  const v = modalBody.querySelector("video");
-  if(v){ try{ v.pause(); }catch(e){} }
-  modalBody.innerHTML = "";
-}
-
-modal.addEventListener("click", (e)=>{
-  const t = e.target;
-  if(t && t.dataset && t.dataset.close === "1"){
-    closeModal();
-  }
-});
-
-document.addEventListener("keydown", (e)=>{
-  if(e.key === "Escape" && modal.classList.contains("open")) closeModal();
-  if(e.key === "ArrowLeft") prev();
-  if(e.key === "ArrowRight") next();
-});
 
 function playTurn(){
   try{
@@ -186,27 +150,24 @@ function playTurn(){
 }
 
 function prev(){
-  if(state.idx > 0){
-    state.idx -= 1;
-    playTurn();
-    render();
-  }else{
-    // stay at pg 1
-    playTurn();
-  }
+  state.leftIdx = (state.leftIdx - 1 + state.pages.length) % state.pages.length;
+  playTurn();
+  renderLeft();
 }
 
 function next(){
-  state.idx += 1;
-  ensurePageExists(state.idx);
-  // auto assign pg numbers in sequence
-  state.pages[state.idx].pg = state.idx + 1;
+  state.rightIdx = (state.rightIdx + 1) % state.pages.length;
   playTurn();
-  render();
+  renderRight();
 }
 
 btnPrev?.addEventListener("click", prev);
 btnNext?.addEventListener("click", next);
+
+document.addEventListener("keydown", (e)=>{
+  if(e.key === "ArrowLeft") prev();
+  if(e.key === "ArrowRight") next();
+});
 
 async function boot(){
   try{
@@ -217,8 +178,12 @@ async function boot(){
     state.pages = [{pg:1, blocks:[]}];
     console.warn("Lore pages.json not found or invalid", err);
   }
-  state.idx = 0;
-  render();
+
+  state.leftIdx = 0;
+  state.rightIdx = 1;
+
+  renderLeft();
+  renderRight();
 }
 
 boot();
