@@ -1,5 +1,5 @@
 // Lore Book (public viewer)
-// Pages are authored via /admin into content/lore/pages.json
+// Entries are authored via /admin into content/lore/*.md
 
 const state = {
   pages: [],
@@ -14,66 +14,13 @@ const elPg = document.querySelector(".lore-pg");
 const btnPrev = document.querySelector(".lore-prev");
 const btnNext = document.querySelector(".lore-next");
 
-const modal = document.getElementById("loreModal");
-const modalBody = document.getElementById("loreModalBody");
-
 function safeText(t){
   return (t ?? "").toString();
-}
-
-function normalizePages(raw){
-  const arr = Array.isArray(raw?.pages) ? raw.pages : [];
-  arr.sort((a,b)=> (Number(a.pg||0) - Number(b.pg||0)));
-  return arr.map((p,i)=> ({
-    pg: Number(p.pg || (i+1)),
-    blocks: Array.isArray(p.blocks) ? p.blocks : []
-  }));
-}
-
-function ensurePageExists(targetIdx){
-  while(state.pages.length <= targetIdx){
-    const pg = state.pages.length + 1;
-    state.pages.push({ pg, blocks: [] });
-  }
-}
-
-function renderLeft(){
-  ensurePageExists(state.leftIdx);
-  const page = state.pages[state.leftIdx];
-
-  elLeft.innerHTML = "";
-  elPg.textContent = "PG " + page.pg;
-
-  const blocks = page.blocks || [];
-  for(const b of blocks){
-    if((b.side || "left") === "left"){
-      elLeft.appendChild(renderBlock(b));
-    }
-  }
-
-  if(!elLeft.children.length) elLeft.appendChild(placeholder());
-}
-
-function renderRight(){
-  ensurePageExists(state.rightIdx);
-  const page = state.pages[state.rightIdx];
-
-  elRight.innerHTML = "";
-
-  const blocks = page.blocks || [];
-  for(const b of blocks){
-    if((b.side || "left") === "right"){
-      elRight.appendChild(renderBlock(b));
-    }
-  }
-
-  if(!elRight.children.length) elRight.appendChild(placeholder());
 }
 
 function placeholder(){
   const d = document.createElement("div");
   d.className = "lore-block lore-placeholder";
-  d.textContent = "";
   return d;
 }
 
@@ -87,59 +34,69 @@ function renderBlock(b){
     p.className = "lore-text";
     p.textContent = safeText(b.text);
     wrap.appendChild(p);
-
-    if(b.caption){
-      const c = document.createElement("div");
-      c.className = "lore-caption";
-      c.textContent = safeText(b.caption);
-      wrap.appendChild(c);
-    }
-
     return wrap;
   }
 
   if(type === "image"){
     const img = document.createElement("img");
-    img.className = "lore-thumb";
-    img.loading = "lazy";
-    img.alt = safeText(b.caption || "Image");
+    img.className = "lore-media";
     img.src = safeText(b.src);
+    img.loading = "lazy";
     wrap.appendChild(img);
-
-    if(b.caption){
-      const c = document.createElement("div");
-      c.className = "lore-caption";
-      c.textContent = safeText(b.caption);
-      wrap.appendChild(c);
-    }
-
     return wrap;
   }
 
   if(type === "video"){
     const vid = document.createElement("video");
+    vid.className = "lore-media";
     vid.src = safeText(b.src);
-    vid.className = "lore-video";
     vid.controls = true;
     vid.playsInline = true;
-    vid.style.width = "100%";
     wrap.appendChild(vid);
-
-    if(b.caption){
-      const c = document.createElement("div");
-      c.className = "lore-caption";
-      c.textContent = safeText(b.caption);
-      wrap.appendChild(c);
-    }
-
     return wrap;
   }
 
-  const p = document.createElement("div");
-  p.className = "lore-text";
-  p.textContent = safeText(b.text || "");
-  wrap.appendChild(p);
   return wrap;
+}
+
+function renderLeft(){
+  elLeft.innerHTML = "";
+
+  const page = state.pages[state.leftIdx];
+  if(!page){
+    elLeft.appendChild(placeholder());
+    return;
+  }
+
+  for(const b of page.blocks){
+    if((b.side || "left") === "left"){
+      elLeft.appendChild(renderBlock(b));
+    }
+  }
+
+  if(!elLeft.children.length){
+    elLeft.appendChild(placeholder());
+  }
+}
+
+function renderRight(){
+  elRight.innerHTML = "";
+
+  const page = state.pages[state.rightIdx];
+  if(!page){
+    elRight.appendChild(placeholder());
+    return;
+  }
+
+  for(const b of page.blocks){
+    if((b.side || "left") === "right"){
+      elRight.appendChild(renderBlock(b));
+    }
+  }
+
+  if(!elRight.children.length){
+    elRight.appendChild(placeholder());
+  }
 }
 
 function playTurn(){
@@ -169,14 +126,52 @@ document.addEventListener("keydown", (e)=>{
   if(e.key === "ArrowRight") next();
 });
 
+async function loadMarkdown(file){
+  const res = await fetch("content/lore/" + file);
+  const text = await res.text();
+
+  const match = text.match(/---([\s\S]*?)---/);
+  if(!match) return null;
+
+  const yaml = match[1];
+
+  const pgMatch = yaml.match(/pg:\s*(\d+)/);
+  const textMatch = yaml.match(/text:\s*["']?([\s\S]*?)["']?$/m);
+
+  return {
+    pg: pgMatch ? Number(pgMatch[1]) : 1,
+    blocks: [{
+      type: "text",
+      side: "left",
+      text: textMatch ? textMatch[1].trim() : ""
+    }]
+  };
+}
+
 async function boot(){
   try{
-    const res = await fetch("content/lore/pages.json", {cache:"no-store"});
-    const raw = await res.json();
-    state.pages = normalizePages(raw);
+    const res = await fetch("content/lore/");
+    const html = await res.text();
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+
+    const links = [...doc.querySelectorAll("a")]
+      .map(a => a.getAttribute("href"))
+      .filter(h => h && h.endsWith(".md"));
+
+    const pages = [];
+
+    for(const file of links){
+      const page = await loadMarkdown(file);
+      if(page) pages.push(page);
+    }
+
+    state.pages = pages.sort((a,b)=>a.pg-b.pg);
+
   }catch(err){
-    state.pages = [{pg:1, blocks:[]}];
-    console.warn("Lore pages.json not found or invalid", err);
+    console.warn("Lore load failed", err);
+    state.pages = [{ pg:1, blocks:[] }];
   }
 
   state.leftIdx = 0;
@@ -187,3 +182,4 @@ async function boot(){
 }
 
 boot();
+
