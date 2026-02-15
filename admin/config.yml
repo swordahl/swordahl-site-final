@@ -8,31 +8,38 @@ public_folder: "/assets/images"
 collections:
   - name: "lore"
     label: "Lore Book"
-    folder: "content/lore"
-    create: true
-    slug: "{{slug}}"
-    fields:
-      - { label: "Title", name: "title", widget: "string" }
-
-      - label: "Sections"
-        name: "sections"
-        widget: "list"
-        types:
-          - label: "Text Block"
-            name: "text"
-            widget: "object"
+    files:
+      - file: "content/lore/pages.json"
+        label: "Pages"
+        name: "pagesfile"
+        fields:
+          - label: "Pages"
+            name: "pages"
+            widget: "list"
             fields:
-              - { label: "Text", name: "content", widget: "markdown" }
+              - { label: "Page Number", name: "pg", widget: "number" }
 
-          - label: "Image Block"
-            name: "image"
-            widget: "object"
-            fields:
-              - { label: "Image", name: "image", widget: "image" }
-              - { label: "Caption", name: "caption", widget: "string", required: false }
+              - label: "Blocks"
+                name: "blocks"
+                widget: "list"
+                types:
+                  - label: "Text"
+                    name: "text"
+                    widget: "object"
+                    fields:
+                      - { label: "Side", name: "side", widget: "select", options: ["left", "right"] }
+                      - { label: "Text", name: "text", widget: "markdown" }
 
-          - label: "Video Block"
-            name: "video"
-            widget: "object"
-            fields:
-              - { label: "Video URL (YouTube/Vimeo)", name: "url", widget: "string" }
+                  - label: "Image"
+                    name: "image"
+                    widget: "object"
+                    fields:
+                      - { label: "Side", name: "side", widget: "select", options: ["left", "right"] }
+                      - { label: "Image", name: "src", widget: "image" }
+
+                  - label: "Video"
+                    name: "video"
+                    widget: "object"
+                    fields:
+                      - { label: "Side", name: "side", widget: "select", options: ["left", "right"] }
+                      - { label: "Video File", name: "src", widget: "file" }
